@@ -1,0 +1,48 @@
+#!/bin/bash
+# Test the courseware using xmllint and then try importing
+# into a memory based ModuleStore.
+
+
+# Simple xml lint to catch easy stuff
+find /course -name \*.xml | while read xml
+do
+   echo "$xml"
+   xmllint "$xml" --noout;
+   rc=$?
+   case $rc in
+	   1)
+		   echo "Unclassified error occurred"
+		   ;;
+	   2)
+		   echo "Error in DTD"
+		   ;;
+	   3)
+		   echo "Validation error"
+		   ;;
+	   4)
+		   echo "Validation error"
+		   ;;
+	   5)
+		   echo "Error in schema compilation"
+		   ;;
+	   6)
+		   echo "Error writing output"
+		   ;;
+	   7)
+		   echo "Error in pattern (generated when [--pattern] option is used)"
+		   ;;
+	   8)
+		   echo "Error in Reader registration (generated when [--chkregister] option is used)"
+		   ;;
+	   9)
+		   echo "Out of memory error"
+		   ;;
+   esac
+   if [ $? -ne 0 ]; then
+	   echo "bad xml"; 
+	   break
+   fi
+done
+
+cd /build/edx-platform
+python /app/import_test.py /course

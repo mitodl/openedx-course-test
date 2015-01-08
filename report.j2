@@ -1,0 +1,23 @@
+{# Jinja template for course report #}
+
+Course Imported: {{ course.display_name }}
+Course ID: {{ course_key }}
+Has Started: {{ course.has_started() }}
+Has Ended: {{ course.has_ended() }}
+Number of Chapters: {{ course.get_children()|length }}
+----------------------------------------
+{%- for chapter in course.get_children() %}
+Chapter: {{ chapter.display_name_with_default }}
+Number of Sequentials: {{ chapter.get_children()|length }}
+    {%- for sequence in chapter.get_children() %}
+    Sequence: {{ sequence.display_name_with_default }}
+	Number of Verticals: {{ sequence.get_children()|length }}
+	    {%- for vertical in sequence.get_children() %}
+		Vertical: {{ vertical.display_name_with_default }}
+		Number of Units: {{ vertical.get_children()|length }}
+  	        {%- for unit in vertical.get_children() %}
+		    Unit: {{ unit.display_name_with_default }}
+			{%- endfor %}
+		{%- endfor %}
+	{%- endfor %}
+{% endfor %}
