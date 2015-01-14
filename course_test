@@ -2,6 +2,10 @@
 # 
 # This will setup the docker container, build it if it
 # doesn't exist, and then run the tests.
+#
+# This is suitable for development of the docker image and test
+# scripts.
+
 
 DOCKER_IMAGE=devops/course_tester
 
@@ -15,8 +19,7 @@ if [ "$image" != "1" ]; then
 fi
 
 # Setup a docker instance to run our tests
-APP_DIR='/app'
 COURSE_LOCATION=$(cd "$1"; pwd)
 COURSE_DIR='/course'
 
-docker run -v "$COURSE_LOCATION":"$COURSE_DIR" -v "$PWD":"$APP_DIR" -w $APP_DIR $DOCKER_IMAGE bash -e 'test_course'
+docker run -v "$COURSE_LOCATION":"$COURSE_DIR" -w /bin $DOCKER_IMAGE bash -xe 'test_course'

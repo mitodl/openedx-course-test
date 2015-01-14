@@ -2,11 +2,12 @@
 # Test the courseware using xmllint and then try importing
 # into a memory based ModuleStore.
 
+# Find out where we are
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Simple xml lint to catch easy stuff
 find /course -name \*.xml | while read xml
 do
-   echo "$xml"
    xmllint "$xml" --noout;
    rc=$?
    case $rc in
@@ -39,10 +40,12 @@ do
 		   ;;
    esac
    if [ $? -ne 0 ]; then
-	   echo "bad xml"; 
+	   echo -e "$xml: \033[0;31mBad XML\033[0m"; 
 	   break
    fi
+   echo -e "$xml: \033[0;32mOK\033[0m"
+
 done
 
 cd /build/edx-platform
-python /app/import_test.py /course
+python $DIR/import_test.py /course

@@ -44,7 +44,7 @@ def import_course(directory):
     courses = modulestore.get_courses()
     # Validate we have one and only one course
     assert len(courses) == 1
-    print('Course imported successfully!')
+    print('\033[0;32mCourse imported successfully!\033[0m')
 
     course = modulestore.courses.get(modulestore.courses.keys()[0])
     course_key = u'{}'.format(
@@ -62,7 +62,7 @@ def import_course(directory):
         sys.stdout = UTF8Writer(sys.stdout)
         print(template.render({'course': course, 'course_key': course_key}))
 
-    print('Possible issues in course:')
+    print('\033[0;33mPossible issues in course:\033[0m')
     print('==========================')
     for line in output.getvalue().split('\n'):
         split_msg = line.split('|')
