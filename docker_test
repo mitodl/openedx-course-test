@@ -10,9 +10,7 @@ image=$(docker images | grep "$DOCKER_IMAGE" | wc -l)
 if [ "$image" != "1" ]; then
 	DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 	pushd "$DIR"
-	pushd ..
 	docker build -t=$DOCKER_IMAGE .
-	popd
 	popd
 fi
 
