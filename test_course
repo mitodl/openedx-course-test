@@ -49,3 +49,4 @@ done
 
 cd /build/edx-platform
 python $DIR/import_test.py /course
+echo "=========================="
