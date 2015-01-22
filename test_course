@@ -11,37 +11,37 @@ do
    xmllint "$xml" --noout;
    rc=$?
    case $rc in
-	   1)
-		   echo "Unclassified error occurred"
-		   ;;
-	   2)
-		   echo "Error in DTD"
-		   ;;
-	   3)
-		   echo "Validation error"
-		   ;;
-	   4)
-		   echo "Validation error"
-		   ;;
-	   5)
-		   echo "Error in schema compilation"
-		   ;;
-	   6)
-		   echo "Error writing output"
-		   ;;
-	   7)
-		   echo "Error in pattern (generated when [--pattern] option is used)"
-		   ;;
-	   8)
-		   echo "Error in Reader registration (generated when [--chkregister] option is used)"
-		   ;;
-	   9)
-		   echo "Out of memory error"
-		   ;;
+       1)
+           echo "Unclassified error occurred"
+           ;;
+       2)
+           echo "Error in DTD"
+           ;;
+       3)
+           echo "Validation error"
+           ;;
+       4)
+           echo "Validation error"
+           ;;
+       5)
+           echo "Error in schema compilation"
+           ;;
+       6)
+           echo "Error writing output"
+           ;;
+       7)
+           echo "Error in pattern (generated when [--pattern] option is used)"
+           ;;
+       8)
+           echo "Error in Reader registration (generated when [--chkregister] option is used)"
+           ;;
+       9)
+           echo "Out of memory error"
+           ;;
    esac
    if [ $? -ne 0 ]; then
-	   echo -e "$xml: \033[0;31mBad XML\033[0m"; 
-	   break
+       echo -e "$xml: \033[0;31mBad XML\033[0m"; 
+       break
    fi
    echo -e "$xml: \033[0;32mOK\033[0m"
 
