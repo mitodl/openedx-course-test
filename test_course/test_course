@@ -1,11 +1,14 @@
 #!/bin/bash
 # Test the courseware using xmllint and then try importing
 # into a memory based ModuleStore.
+set -e
 
 # Find out where we are
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Simple xml lint to catch easy stuff
+# Disable eval mode temp to provide a more helpful message
+set +e
 find /course -name \*.xml | while read xml
 do
    xmllint "$xml" --noout;
@@ -46,7 +49,8 @@ do
    echo -e "$xml: \033[0;32mOK\033[0m"
 
 done
-
+set -e
 cd /build/edx-platform
-python $DIR/import_test.py /course
+echo $DIR
+python $DIR/py_course_test /course
 echo "=========================="

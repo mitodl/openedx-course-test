@@ -2,24 +2,97 @@
 # 
 # This will setup the docker container, build it if it
 # doesn't exist, and then run the tests.
-#
-# This is suitable for development of the docker image and test
-# scripts.
 
+DOCKER_IMAGE=mitodl/openedx-course-test
 
-DOCKER_IMAGE=devops/course_tester
+EXPECTED_ARGS=1
+E_BADARGS=65
 
-# Create docker base image if it doesn't exist
-image=$(docker images | grep "$DOCKER_IMAGE" | wc -l)
-if [ "$image" != "1" ]; then
-	DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-	pushd "$DIR"
-	docker build -t=$DOCKER_IMAGE .
-	popd
+progname=$(basename $0) 
+usage()
+{
+
+        cat <<EOF
+Usage: $progname [options] course_directory
+
+Use the docker image to run course checks
+
+Options:
+ --help print this help message
+ -l, --local use the local ``course_test`` instead of the one in the image
+
+EOF
+}
+
+SHORTOPTS="l"
+LONGOPTS="help,local"
+
+if $(getopt -T >/dev/null 2>&1) ; [ $? = 4 ] ; then # New longopts getopt.
+ OPTS=$(getopt -o $SHORTOPTS --long $LONGOPTS -n "$progname" -- "$@")
+else # Old classic getopt.
+ # Special handling for --help on old getopt.
+ case $1 in --help) usage ; exit 0 ;; esac
+ OPTS=$(getopt $SHORTOPTS "$@")
+fi
+
+if [ $? -ne 0 ]; then
+ echo "'$progname --help' for more information" 1>&2
+ exit 1
+fi
+
+eval set -- "$OPTS"
+
+local=false
+
+while [ $# -gt 0 ]; do
+        : debug: $1
+        case $1 in
+                --help)
+                        usage
+                        exit 0
+                        ;;
+                -l|--local)
+                        local=true
+                        shift
+                        ;;
+                --)
+                        shift
+                        break
+                        ;;
+                *)
+                        echo "Internal Error: option processing error: $1" 1>&2
+                        exit 1
+                        ;;
+        esac
+done
+
+if [ $# -ne $EXPECTED_ARGS ] ; then
+        usage
+        exit $E_BADARGS
+fi
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if $local; then 
+        # Create docker base image if it doesn't exist
+        image=$(docker images | grep "$DOCKER_IMAGE" | wc -l)
+
+        if [ "$image" != "1" ]; then
+                pushd "$DIR"
+                docker build -t=$DOCKER_IMAGE .
+                popd
+        fi
 fi
 
 # Setup a docker instance to run our tests
+APP_DIR='/app'
 COURSE_LOCATION=$(cd "$1"; pwd)
 COURSE_DIR='/course'
 
-docker run -v "$COURSE_LOCATION":"$COURSE_DIR" -w /course-test $DOCKER_IMAGE bash -xe 'test_course'
+
+if $local; then
+    echo "$DIR"
+    docker run -v "$COURSE_LOCATION":"$COURSE_DIR" -v "$DIR":"$APP_DIR" -w $APP_DIR/test_course $DOCKER_IMAGE bash -e 'test_course'
+else
+    docker run -v "$COURSE_LOCATION":"$COURSE_DIR" -w /test_course $DOCKER_IMAGE bash -e 'test_course'
+fi

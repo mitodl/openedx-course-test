@@ -8,10 +8,19 @@ do syntax checking of all course xml.
 
 ## Usage
 
-Simply run `docker_test /path/to/course/folder` where the course
+Simply run `course_test /path/to/course/folder` where the course
 folder has exactly one course in it.  This will need to be run on
 a system that has docker installed and enough ram to run the
-import (probably about 3GiB).
+import (probably about 2GiB).
+
+
+By default this will get the latest public docker image.  If you want
+to build your own locally instead, you can run `course_test -l
+/path/to/course/folder` and it will build it if you don't already have
+the image.  You can also manually build just the image with `docker
+build -t=mitodl/openedx-course-test .` and build from scratch
+(no-cache) with `docker build --no-cache -t=mitodl/openedx-course-test
+.`
 
 ## Usage of docker image directly
 
@@ -19,5 +28,5 @@ We also include the test scripts directly in the docker image without
 mounting a volume (handy for having just the course repo alone in a
 jenkins build), and those can be executed with something like
 `course_test /path/to/course`, or directly with docker using `docker
-run -v "/path/to/course_dir":"/course" -w /course-test $DOCKER_IMAGE bash -xe
-'test_course'`
+run -v "/path/to/course_dir":"/course" -w /course-test
+mitodl/openedx-course-test bash -xe 'test_course'`
