@@ -54,6 +54,7 @@ def import_course(directory):
     with open(
             os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
+                'templates',
                 'report.j2'
             )
     ) as template_file:

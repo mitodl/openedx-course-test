@@ -1,12 +1,16 @@
 #!/bin/bash
 # Test the courseware using xmllint and then try importing
 # into a memory based ModuleStore.
+set -e
 
 # Find out where we are
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Simple xml lint to catch easy stuff
-find /course -name \*.xml | while read xml
+# Disable eval mode temp to provide a more helpful message
+set +e
+failed=false
+while IFS= read -r xml
 do
    xmllint "$xml" --noout;
    rc=$?
@@ -39,14 +43,21 @@ do
            echo "Out of memory error"
            ;;
    esac
-   if [ $? -ne 0 ]; then
-       echo -e "$xml: \033[0;31mBad XML\033[0m"; 
-       break
+   if [ $rc -ne 0 ]; then
+       echo -e "$xml: \033[0;31mBad XML\033[0m"
+       failed=true
+       continue
    fi
    echo -e "$xml: \033[0;32mOK\033[0m"
+done <<< "$(find /course -name \*.xml)"
 
-done
-
+if $failed; then
+    echo "XML Syntax errors occurred."
+    echo "Please check above for 'Bad XML' and correct them."
+    exit 1
+fi
+set -e
 cd /build/edx-platform
-python $DIR/import_test.py /course
+echo $DIR
+python $DIR/py_course_test /course
 echo "=========================="
