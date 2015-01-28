@@ -6,7 +6,16 @@ This repo builds a docker image of a minimal edx-platform install
 capable of doing in memory course imports, along with `xmllint` to
 do syntax checking of all course xml.
 
-## Usage
+## Quick Start
+
+If you have docker installed and a course to test, you don't even need
+to grab this repository, just run: `docker run -v
+"/path/to/course_dir":"/course" -w /course-test
+mitodl/openedx-course-test bash -e 'test_course'` replacing
+`path/to/course_dir` with the file path to a folder above where you
+have your course.
+
+## Full Usage
 
 Simply run `course_test /path/to/course/folder` where the course
 folder has exactly one course in it.  This will need to be run on
@@ -21,12 +30,3 @@ the image.  You can also manually build just the image with `docker
 build -t=mitodl/openedx-course-test .` and build from scratch
 (no-cache) with `docker build --no-cache -t=mitodl/openedx-course-test
 .`
-
-## Usage of docker image directly
-
-We also include the test scripts directly in the docker image without
-mounting a volume (handy for having just the course repo alone in a
-jenkins build), and those can be executed with something like
-`course_test /path/to/course`, or directly with docker using `docker
-run -v "/path/to/course_dir":"/course" -w /course-test
-mitodl/openedx-course-test bash -xe 'test_course'`
