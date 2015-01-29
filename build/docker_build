@@ -9,7 +9,6 @@ apt-get update -y
 apt-get install build-essential git python-pip libfreetype6 libgeos-3.2.2 libgeos-dev python-dev gfortran libatlas-dev libblas-dev liblapack-dev liblapack3gf libxml2-dev libxslt-dev libxml2-utils -y
 
 # Edx-Platform
-pip install jinja2
 git clone https://github.com/edx/edx-platform -b release
 pip install -r requirements.txt
 pip install -r edx-platform/requirements/edx/github.txt
