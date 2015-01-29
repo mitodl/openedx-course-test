@@ -30,3 +30,8 @@ django-crum==0.5
 
 # Extra XBlocks
 -e git+https://github.com/mitodl/edx-sga@86b860c255149acf0abbf1894f023714f346c3e8#egg=edx-sga
+
+
+# Internal requirements
+jinja2
+demjson

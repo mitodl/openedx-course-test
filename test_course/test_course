@@ -9,6 +9,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Simple xml lint to catch easy stuff
 # Disable eval mode temp to provide a more helpful message
 set +e
+echo -e "\033[0;34mStarting XML Syntax Check\033[0m"
 failed=false
 while IFS= read -r xml
 do
@@ -57,6 +58,15 @@ if $failed; then
     exit 1
 fi
 set -e
+echo -e "\033[0;32mXML Syntax Check Successful\033[0m"
+
+echo -e "\033[0;34mStarting JSON Syntax Check\033[0m"
+for json in $(find /course -name "*.json"); do
+    jsonlint -v $json
+done
+echo -e "\033[0;32mJSON Syntax Check Successful\033[0m"
+
+echo -e "\033[0;34mStarting Course Import\033[0m"
 cd /build/edx-platform
 echo $DIR
 python $DIR/py_course_test /course
