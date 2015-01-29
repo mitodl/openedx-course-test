@@ -10,8 +10,8 @@ do syntax checking of all course xml.
 
 If you have docker installed and a course to test, you don't even need
 to grab this repository, just run: `docker run -v
-"/path/to/course_dir":"/course" -w /course-test
-mitodl/openedx-course-test bash -e 'test_course'` replacing
+"/path/to/course_dir":"/course" -w /test_course
+mitodl/openedx-course-test bash -e test_course` replacing
 `path/to/course_dir` with the file path to a folder above where you
 have your course.
 
