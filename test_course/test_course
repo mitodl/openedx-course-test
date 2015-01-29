@@ -11,6 +11,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set +e
 echo -e "\033[0;34mStarting XML Syntax Check\033[0m"
 failed=false
+bad_files=""
 while IFS= read -r xml
 do
    xmllint "$xml" --noout;
@@ -47,14 +48,17 @@ do
    if [ $rc -ne 0 ]; then
        echo -e "$xml: \033[0;31mBad XML\033[0m"
        failed=true
+	   bad_files="$bad_files$xml\n"
        continue
    fi
    echo -e "$xml: \033[0;32mOK\033[0m"
 done <<< "$(find /course -name \*.xml)"
 
 if $failed; then
-    echo "XML Syntax errors occurred."
-    echo "Please check above for 'Bad XML' and correct them."
+    echo -e "\033[0;31mXML Syntax errors occurred in the following files\033[0m:"
+	echo -e $bad_files
+    echo "Please check above for 'Bad XML' to find the specific errors"
+	echo "and correct them."
     exit 1
 fi
 set -e
