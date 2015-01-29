@@ -34,4 +34,4 @@ django-crum==0.5
 
 # Internal requirements
 jinja2
-demjson
+git+https://github.com/dmeranda/demjson@release-2.2.3
