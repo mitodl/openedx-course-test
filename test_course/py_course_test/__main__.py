@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from import_test import test_course
+from test_course import test_course
 
 
 if __name__ == '__main__':
