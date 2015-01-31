@@ -30,3 +30,10 @@ the image.  You can also manually build just the image with `docker
 build -t=mitodl/openedx-course-test .` and build from scratch
 (no-cache) with `docker build --no-cache -t=mitodl/openedx-course-test
 .`
+
+
+## Known Issues
+
+Due to somewhat ridiculous requirements needed to import ORA problems,
+they will just show up as failed in the "Possible issues in course"
+section as `Error loading from xml. No module named ratelimitbackend`.
