@@ -9,7 +9,7 @@ capable of doing several
 [Open Learning XML (OLX)](http://engineering.edx.org/2014/10/open-learning-xml-olx-format/)
 (a.k.a. [Open edX course exports](https://code.edx.org)) content checks and validations.
 
-This is extremely useful raw XML authored (or
+This is extremely useful for raw XML authored (or
 [latex2edx](https://github.com/mitocw/latex2edx)) courses, but it also
 has a lot of benefits for validating regular Studio edited courses as
 well.  Notably link checking and some basic accessibility checks
