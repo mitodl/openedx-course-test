@@ -17,6 +17,7 @@ import logging
 import os
 import sys
 
+from BeautifulSoup import BeautifulStoneSoup
 from jinja2 import Environment
 from PIL import Image
 
@@ -99,6 +100,53 @@ def check_image(directory, course):
     return results
 
 
+def recurse_for_alt(element, results):
+    """
+    Depth first recursor for going through children and finding
+    images
+    """
+    # Check
+    if hasattr(element, 'data'):
+        # Try and parse data as XML
+        try:
+            soup = BeautifulStoneSoup(element.data)
+            for img in soup.findAll('img'):
+                if not img.get('alt', False):
+                    results.append(
+                        TestResult(
+                            'Image missing alt tag for `{}` in {} ({})'.format(
+                                img,
+                                element.xml_attributes['filename'][0],
+                                element.location
+                            ),
+                            False
+                        )
+                    )
+        except Exception:
+            pass
+    # And recurse
+    if not hasattr(element, 'get_children'):
+        return
+    if len(element.get_children()) == 0:
+        return
+    for child in element.get_children():
+        recurse_for_alt(child, results)
+
+
+def check_alt_tags(course):
+    """
+    Run through entire course tree looking for <img> tags
+    that don't have alt attributes
+    """
+    # walk the tree for data in nodes and check them
+    results = []
+    recurse_for_alt(course, results)
+    # If no results, no failures, make a pass test result
+    if len(results) == 0:
+        results.append(TestResult('All images have `alt` attributes', True))
+    return results
+
+
 def report_results(results):
     """Output from a list of `class:TestResult` objects and return false
     if any of them are critical.
@@ -129,12 +177,14 @@ def report_results(results):
     return failed
 
 
-def import_course(directory):
+def test_course(directory):
 
-    """Import the course, run the tests, and generate reports
+    """Import the course, run tests that require the course objects, and
+    generate reports
 
     Args:
         directory (str): Path to directory that contains the course folders
+
     """
 
     # Add in student modules and settings
@@ -166,6 +216,7 @@ def import_course(directory):
         course.location.course_key.to_deprecated_string()
     )
     results.extend(check_image(directory, course))
+    results.extend(check_alt_tags(course))
 
     if report_results(results):
         sys.exit(1)
@@ -191,4 +242,4 @@ def import_course(directory):
             print(split_msg[1])
 
 if __name__ == '__main__':
-    import_course(sys.argv[1])
+    test_course(sys.argv[1])

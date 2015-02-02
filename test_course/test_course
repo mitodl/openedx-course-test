@@ -89,7 +89,7 @@ if $failed; then
 fi
 echo -e "\033[0;32mStatic Name Check Successful\033[0m"
 
-echo -e "\033[0;34mStarting Course Import\033[0m"
+echo -e "\033[0;34mStarting Python Tests\033[0m"
 cd /build/edx-platform
 python $DIR/py_course_test /course
 echo "=========================="
