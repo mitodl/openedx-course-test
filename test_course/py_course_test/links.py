@@ -11,6 +11,7 @@ import os
 
 from BeautifulSoup import BeautifulStoneSoup
 from opaque_keys import InvalidKeyError
+import requests
 from xmodule.modulestore.exceptions import ItemNotFoundError
 from xmodule.modulestore.search import path_to_location
 
@@ -78,6 +79,29 @@ def check_static(course, element, href):
         )
 
 
+def check_external(element, href):
+    """
+    This will go ahead and try and get the URL linked to
+    and if it is a 404 returns a failed test result.
+    """
+    result_msg = None
+    try:
+        status_code = requests.head(
+            href, timeout=1, allow_redirects=True,
+        ).status_code
+        if status_code != 200:
+            result_msg = "Status code was {}, expected 200".format(status_code)
+    except requests.exceptions.RequestException, ex:
+        result_msg = "Request exception occurred, {}".format(ex)
+    if result_msg:
+        return TestResult(
+            'External link {} in {} invalid. {}'.format(
+                href, element.location, result_msg
+            ),
+            False
+        )
+
+
 def recurse_for_links(course, element, results, counter):
 
     """
@@ -113,11 +137,11 @@ def recurse_for_links(course, element, results, counter):
                         )
                         if check:
                             results.append(check)
-                    # elif href.startswith('http'):
-                    #     # Use urlparse and requests to ping the URL
-                    #     results.append(
-                    #         check_external(href)
-                    #     )
+                    elif href.startswith('http'):
+                        # Use urlparse and requests to ping the URL
+                        check = check_external(element, href)
+                        if check:
+                            results.append(check)
         except HTMLParser.HTMLParseError:
             pass
     # And recurse
