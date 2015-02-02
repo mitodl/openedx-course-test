@@ -7,6 +7,7 @@ Check links within the course. Specifically these link types:
 - External links
 """
 import HTMLParser
+import os
 
 from BeautifulSoup import BeautifulStoneSoup
 from opaque_keys import InvalidKeyError
@@ -58,7 +59,27 @@ def check_jump_to_id(course, element, module_id):
         )
 
 
+def check_static(course, element, href):
+    """Verify that magic /static links have files that exist on disk
+
+    """
+    path = os.path.join(
+        course.runtime.modulestore.data_dir,
+        course.data_dir,
+        'static',
+        href
+    )
+    if not os.path.isfile(path):
+        return TestResult(
+            'Linked static asset {} in {} not found'.format(
+                href, element.location
+            ),
+            False
+        )
+
+
 def recurse_for_links(course, element, results, counter):
+
     """
     Depth first recursor for going through children, finding
     links, and validating them
@@ -85,6 +106,18 @@ def recurse_for_links(course, element, results, counter):
                         )
                         if check:
                             results.append(check)
+                    elif href.startswith('/static/'):
+                        # use file system to find file or not
+                        check = check_static(
+                            course, element, href.replace('/static/', '')
+                        )
+                        if check:
+                            results.append(check)
+                    # elif href.startswith('http'):
+                    #     # Use urlparse and requests to ping the URL
+                    #     results.append(
+                    #         check_external(href)
+                    #     )
         except HTMLParser.HTMLParseError:
             pass
     # And recurse
