@@ -27,12 +27,13 @@ have your course.
 
 - XML syntax validation
 - JSON policy file syntax validation
+- Static asset file names are in the simple URL set of `^[a-zA-Z0-9_\./-]+$`
+- Course imports successfully into `XMLModuleStore`
 - Course image validation
   - It exists
   - It is an image
   - It is the correct image type (PNG or JPG)
   - It warns if the aspect ratio isn't correct (1.75)
-- Static asset file names are in the simple URL set of `^[a-zA-Z0-9_\./-]+$`
 - All image tags in content have `alt` attributes for accessibility
 - All video units have `show_captions` set to true (warns only)
 
