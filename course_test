@@ -92,7 +92,7 @@ COURSE_DIR='/course'
 
 if $local; then
     echo "$DIR"
-    docker run -v "$COURSE_LOCATION":"$COURSE_DIR" -v "$DIR":"$APP_DIR" -w $APP_DIR/test_course $DOCKER_IMAGE bash -e 'test_course'
+    docker run -i -t -v "$COURSE_LOCATION":"$COURSE_DIR" -v "$DIR":"$APP_DIR" -w $APP_DIR/test_course $DOCKER_IMAGE bash -e 'test_course'
 else
     docker run -v "$COURSE_LOCATION":"$COURSE_DIR" -w /test_course $DOCKER_IMAGE bash -e 'test_course'
 fi
