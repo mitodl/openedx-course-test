@@ -1,10 +1,18 @@
 # Course Tester
+
 ---
 Syntax checker and validator for edX Courses.
 ---
+
 This repo builds a docker image of a minimal edx-platform install
-capable of doing in memory course imports, along with `xmllint` to
-do syntax checking of all course xml.
+capable of doing several
+[Open Learning XML (OLX)](http://engineering.edx.org/2014/10/open-learning-xml-olx-format/)
+(a.k.a. [Open edX course exports](https://code.edx.org)) content checks and validations.
+
+This is extremely useful raw XML authored (or
+[latex2edx](https://github.com/mitocw/latex2edx)) courses, but it also
+has a lot of benefits for validating regular Studio edited courses as
+well.  Notably link checking and some basic accessibility checks
 
 ## Quick Start
 
@@ -14,6 +22,20 @@ to grab this repository, just run: `docker run -v
 mitodl/openedx-course-test bash -e test_course` replacing
 `path/to/course_dir` with the file path to a folder above where you
 have your course.
+
+## Current Tests
+
+- XML syntax validation
+- JSON policy file syntax validation
+- Course image validation
+  - It exists
+  - It is an image
+  - It is the correct image type (PNG or JPG)
+  - It warns if the aspect ratio isn't correct (1.75)
+- Static asset file names are in the simple URL set of `^[a-zA-Z0-9_\./-]+$`
+- All image tags in content have `alt` attributes for accessibility
+- All video units have `show_captions` set to true (warns only)
+
 
 ## Full Usage
 
