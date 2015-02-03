@@ -63,4 +63,4 @@ build -t=mitodl/openedx-course-test .` and build from scratch
 
 Due to somewhat ridiculous requirements needed to import ORA problems,
 they will just show up as failed in the "Possible issues in course"
-section as `Error loading from xml. No module named ratelimitbackend`.
+section as `Error loading from xml. No module named require`.

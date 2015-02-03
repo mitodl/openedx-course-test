@@ -35,10 +35,8 @@ def test_course(directory):
 
     """
 
-    # Add in student modules and settings
-    sys.path.append('/build/edx-platform/')
-    sys.path.append('/build/edx-platform/lms/djangoapps/')
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'lms.envs.test'
+    # Set django settings to studio test settings
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'cms.envs.test'
 
     # Setup logging level and capture stream
     root = logging.getLogger()
