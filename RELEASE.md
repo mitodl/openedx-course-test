@@ -1,5 +1,8 @@
 # Open edX Course Test Release Notes
 
+## New in 0.3.1
+- Switch to using cms due to issue in latest edx-platform release
+
 ## New in 0.3.0
 - Course image validation
   - It exists
