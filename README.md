@@ -36,7 +36,11 @@ have your course.
   - It warns if the aspect ratio isn't correct (1.75)
 - All image tags in content have `alt` attributes for accessibility
 - All video units have `show_captions` set to true (warns only)
-
+- Link checking
+  - `/static/` magic links point at assets that exist in the course
+  - `/jump_to/` links point at internally valid courseware
+  - `/jump_to_id/` point at valid urls within the course
+  - `http[s]` links are tested with HEAD and validated to return 200 status code
 
 ## Full Usage
 

@@ -22,7 +22,7 @@ def report_results(results):
         bool: True if a critical failure was detected
     """
     print("\033[0;34mPython Test Results\033[0m")
-
+    print("\033[0;34m{}\033[0m".format('=' * 78))
     failed = False
     for result_list in results:
         print('\033[0;34m{}\033[0m'.format(result_list.list_description))

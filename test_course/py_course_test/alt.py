@@ -4,6 +4,8 @@
 Check that all img tags in the course have an alt
 tag
 """
+import HTMLParser
+
 from BeautifulSoup import BeautifulStoneSoup
 
 from common import TestResult, TestResultList
@@ -31,7 +33,7 @@ def recurse_for_alt(element, results):
                             False
                         )
                     )
-        except Exception:
+        except HTMLParser.HTMLParseError:
             pass
     # And recurse
     if not hasattr(element, 'get_children'):

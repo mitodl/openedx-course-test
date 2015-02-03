@@ -21,6 +21,7 @@ from common import TestResult, TestResultList
 from alt import check_alt_tags
 from image import check_image
 from captions import check_captions
+from links import check_links
 from report import report_results, render_report_results
 
 
@@ -69,6 +70,7 @@ def test_course(directory):
     results.append(check_image(directory, course))
     results.append(check_alt_tags(course))
     results.append(check_captions(course))
+    results.append(check_links(course))
 
     if report_results(results):
         sys.exit(1)
