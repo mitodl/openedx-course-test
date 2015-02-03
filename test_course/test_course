@@ -2,7 +2,6 @@
 # Test the courseware using xmllint and then try importing
 # into a memory based ModuleStore.
 set -e
-
 # Find out where we are
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -70,8 +69,27 @@ for json in $(find /course -name "*.json"); do
 done
 echo -e "\033[0;32mJSON Syntax Check Successful\033[0m"
 
-echo -e "\033[0;34mStarting Course Import\033[0m"
+echo -e "\033[0;34mStarting Static Name Check\033[0m"
+failed=false
+bad_files=""
+while IFS= read -r asset; do
+	if [[ "$asset" =~ ^[a-zA-Z0-9_\./-]+$ ]]; then
+		echo -e "$asset: \033[0;32mOK\033[0m"
+	else
+		echo -e "$asset: \033[0;31mContains Invalid Characters\033[0m"
+		failed=true
+		bad_files="$bad_files$asset\n"
+	fi
+done <<< "$(find /course/*/static/)"
+if $failed; then
+    echo -e "\033[0;31mfollowing assets have invalid names\033[0m:"
+	echo -e $bad_files
+    echo "Please only use numbers, letters, underscores, dots, and dashes"
+    exit 1
+fi
+echo -e "\033[0;32mStatic Name Check Successful\033[0m"
+
+echo -e "\033[0;34mStarting Python Tests\033[0m"
 cd /build/edx-platform
-echo $DIR
 python $DIR/py_course_test /course
 echo "=========================="

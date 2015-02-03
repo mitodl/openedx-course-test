@@ -1,6 +1,5 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
-
 """
 Import a course using the XMLModuleStore object given the
 directory passed in. Attempt to parse the logging output
@@ -10,20 +9,30 @@ and print out a nice report of the results.
   This needs to be run from wihtin the ``edx-platform``
   directory to function properly.
 """
+from __future__ import print_function
 from cStringIO import StringIO
-import codecs
 import logging
 import os
 import sys
 
-from jinja2 import Environment
-
 from xmodule.modulestore.xml import XMLModuleStore
 
+from common import TestResult, TestResultList
+from alt import check_alt_tags
+from image import check_image
+from captions import check_captions
+from links import check_links
+from report import report_results, render_report_results
 
-def import_course(directory):
-    """
-    Setup environment and import the course.
+
+def test_course(directory):
+
+    """Import the course, run tests that require the course objects, and
+    generate reports
+
+    Args:
+        directory (str): Path to directory that contains the course folders
+
     """
 
     # Add in student modules and settings
@@ -43,32 +52,30 @@ def import_course(directory):
     modulestore = XMLModuleStore(directory)
     courses = modulestore.get_courses()
     # Validate we have one and only one course
-    assert len(courses) == 1
-    print('\033[0;32mCourse imported successfully!\033[0m')
+    results = []
+
+    import_test = TestResultList('Test Importability')
+    result = TestResult('Course import success', True)
+    if len(courses) != 1:
+        result.result = False
+    import_test.append(result)
+    results.append(import_test)
+
+    # Course import is dep for all further tests, so just fail out
+    if not result.result:
+        report_results(results)
+        sys.exit(1)
 
     course = modulestore.courses.get(modulestore.courses.keys()[0])
-    course_key = u'{}'.format(
-        course.location.course_key.to_deprecated_string()
-    )
-    jinja_environment = Environment()
-    with open(
-            os.path.join(
-                os.path.dirname(os.path.abspath(__file__)),
-                'templates',
-                'report.j2'
-            )
-    ) as template_file:
-        template = jinja_environment.from_string(template_file.read())
-        UTF8Writer = codecs.getwriter('utf8')
-        sys.stdout = UTF8Writer(sys.stdout)
-        print(template.render({'course': course, 'course_key': course_key}))
+    results.append(check_image(directory, course))
+    results.append(check_alt_tags(course))
+    results.append(check_captions(course))
+    results.append(check_links(course))
 
-    print('\033[0;33mPossible issues in course:\033[0m')
-    print('==========================')
-    for line in output.getvalue().split('\n'):
-        split_msg = line.split('|')
-        if split_msg[0] in ('WARNING', 'ERROR', 'CRITICAL'):
-            print(split_msg[1])
+    if report_results(results):
+        sys.exit(1)
+
+    render_report_results(course, output.getvalue())
 
 if __name__ == '__main__':
-    import_course(sys.argv[1])
+    test_course(sys.argv[1])
